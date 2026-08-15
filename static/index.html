@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocuMind - Hybrid RAG Document QA Engine</title>
+    <!-- Modern Premium Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Panel (Upload & Document Management) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-brain logo-icon"></i>
+                    <span>DocuMind</span>
+                </div>
+                <div class="badge">Hybrid RAG</div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3><i class="fa-solid fa-file-arrow-up"></i> Ingest Document</h3>
+                <div id="drop-zone" class="upload-area">
+                    <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                    <p class="upload-title">Drag & Drop PDF</p>
+                    <p class="upload-subtitle">or click to browse files</p>
+                    <input type="file" id="file-input" accept="application/pdf" hidden>
+                </div>
+                
+                <div id="upload-status" class="upload-status" hidden>
+                    <div class="status-header">
+                        <span id="status-filename">document.pdf</span>
+                        <span id="status-percent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3><i class="fa-solid fa-database"></i> Indexed Context</h3>
+                <div id="active-document" class="active-doc-container">
+                    <div class="empty-doc-state">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <p>No document indexed yet</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="status-indicator">
+                    <span class="pulse-dot"></span>
+                    <span id="api-status">Connecting to Backend...</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area Container -->
+        <main class="chat-container">
+            <header class="chat-header">
+                <div class="header-info">
+                    <h2>Interactive RAG Session</h2>
+                    <p id="chat-sub-status">Upload a document to start asking questions</p>
+                </div>
+                <button id="clear-chat-btn" class="header-btn" title="Clear Chat">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </header>
+
+            <div id="chat-messages" class="chat-messages">
+                <!-- Welcome Message -->
+                <div class="message system">
+                    <div class="message-content">
+                        <div class="message-header">
+                            <i class="fa-solid fa-robot"></i>
+                            <span>DocuMind System Assistant</span>
+                        </div>
+                        <p>Welcome to DocuMind! Please upload a PDF document in the left sidebar to start. Once indexed, the system will use hybrid dense/sparse search (FAISS + BM25) and Cross-Encoder reranking to answer questions grounded strictly in your document, complete with inline citations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat input pane -->
+            <footer class="chat-input-area">
+                <form id="chat-form">
+                    <input type="text" id="query-input" placeholder="Ask a question about the indexed document..." autocomplete="off" disabled>
+                    <button type="submit" id="send-btn" disabled>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </footer>
+        </main>
+
+        <!-- Collapsible Right-hand Citation Inspector -->
+        <aside id="citation-inspector" class="citation-sidebar closed">
+            <div class="inspector-header">
+                <h3><i class="fa-solid fa-magnifying-glass-chart"></i> Citation Inspector</h3>
+                <button id="close-inspector-btn" class="close-btn">&times;</button>
+            </div>
+            <div id="inspector-content" class="inspector-content">
+                <div class="empty-inspector-state">
+                    <i class="fa-solid fa-quote-left"></i>
+                    <p>Click any citation tag <span class="cite-demo">[chunk_xxxx]</span> in a chat bubble to inspect its exact source context blocks and RAG metadata.</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Notification Toast System -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Application Script -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
